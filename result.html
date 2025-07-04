@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Toʻlov natijasi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #1D2354;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px 40px;
+        }
+
+        .success-text {
+            color: #00e676;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .title {
+            color: #cccccc;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .time {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .qr {
+            background-color: white;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .qr img {
+            width: 180px;
+            height: 180px;
+            display: block;
+        }
+
+        .info-table {
+            width: 100%;
+            max-width: 420px;
+            font-size: 14px;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .info-table tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-table td {
+            padding: 12px 6px;
+        }
+
+        .label {
+            color: #bbbbbb;
+            text-align: left;
+        }
+
+        .value {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .button {
+            width: 100%;
+            max-width: 420px;
+            padding: 14px;
+            background-color: #00c853;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #00b342;
+        }
+
+        @media (max-width: 480px) {
+            .time {
+                font-size: 20px;
+            }
+
+            .qr img {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="success-text">Sayr uchun toʻlovingiz muvaffaqiyatli amalga oshirildi</div>
+    <div class="title">Toʻlov vaqti</div>
+    <div class="time">...</div>
+
+    <div class="qr">
+        <img id="qrImage" src="" alt="QR Code" />
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td class="label">Chek raqami</td>
+            <td class="value" id="check">–</td>
+        </tr>
+        <tr>
+            <td class="label">Toʻlangan</td>
+            <td class="value">1700 UZS</td>
+        </tr>
+        <tr>
+            <td class="label">Sayohat sanasi</td>
+            <td class="value" id="date">–</td>
+        </tr>
+        <tr>
+            <td class="label">Yoʻnalish</td>
+            <td class="value">Marshrut №142</td>
+        </tr>
+        <tr>
+            <td class="label">Dav. raqami</td>
+            <td class="value">01/253 EKA</td>
+        </tr>
+    </table>
+
+    <button class="button" onclick="window.location.href='index.html'">Asosiy oynaga qaytish</button>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const checkId = params.get("q") || "–";
+        const rawTime = params.get("t");
+
+        function formatTime(dateStr) {
+            const date = new Date(dateStr);
+            const months = ['yan', 'fev', 'mar', 'apr', 'may', 'iyun', 'iyul', 'avg', 'sen', 'okt', 'noy', 'dek'];
+            const d = date.getDate().toString().padStart(2, '0');
+            const m = months[date.getMonth()];
+            const h = date.getHours().toString().padStart(2, '0');
+            const min = date.getMinutes().toString().padStart(2, '0');
+            return `${d} ${m} ${h}:${min}`;
+        }
+
+        function formatDateOnly(dateStr) {
+            const date = new Date(dateStr);
+            const d = date.getDate().toString().padStart(2, '0');
+            const m = (date.getMonth() + 1).toString().padStart(2, '0');
+            const y = date.getFullYear();
+            return `${d}.${m}.${y}`;
+        }
+
+        // Вставляем значения
+        document.querySelector('.time').textContent = rawTime ? formatTime(rawTime) : 'Nomaʼlum vaqt';
+        document.getElementById('date').textContent = rawTime ? formatDateOnly(rawTime) : '–';
+        document.getElementById('check').textContent = checkId;
+
+        // Генерация QR по ID
+        const qrUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" + encodeURIComponent(checkId) + "&size=180x180";
+        document.getElementById('qrImage').src = qrUrl;
+    </script>
+
+</body>
+
+</html>
